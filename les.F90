@@ -398,11 +398,12 @@ end program les
 	IF (mynode .EQ. 0) THEN
 	OPEN(500, FILE='parameters.dat', POSITION='append')
 	   IF (it .eq. 0) THEN
-	   WRITE(500,'(2a12)') '#Time', 'utau'
+	   WRITE(500,'(5a12)') '#Time', 'utau', 'utau_s', 'dudt', 'dvdt'
 	   END IF
-	   WRITE(500,'(2f12.3)') time+time_start, utau
+	   WRITE(500,'(4f12.3, f12.6 )') time+time_start, utau, utau_s, dudt, dvdt
 	CLOSE(500)  
         ENDIF
+
 	
  END SUBROUTINE output_profiles
   

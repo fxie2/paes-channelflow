@@ -30,6 +30,9 @@ module storage
   real :: uwsfc              ! surface flux of long. velocity
   real :: vwsfc              ! surface flux of lateral velocity
   real :: phim               ! stability function for momentum
+  real :: dudt		! new surface model (Paulo 10/11/14)
+  real :: dvdt		! new surface model (Paulo 10/11/14)
+  real :: utau_s		! new surface model (Paulo 10/11/14)
   
 
   ! MEAN VERTICAL PROFILE VARIABLES:    

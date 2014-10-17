@@ -65,6 +65,13 @@ subroutine sufsim(k,km1)
   vsfc = max(vsfc, 0.01)
 
   utau = vsfc*vk/(zody)
+
+  !new modelling approach by Paulo 10/17/14
+  dudt = sum(dble(ru))/(nnx*nny*nnz)
+  dvdt = sum(dble(rv))/(nnx*nny*nnz)
+  utau_s = sqrt(zl/2*sqrt((-dvdt)**2+(0.016-dudt)**2))
+  ! global quantities only on lower because is called first than upper 
+
  
   
   if (utau.gt.10.) then
@@ -141,6 +148,15 @@ SELECT CASE(isurface)
 
   tauuw(:,:,km1) = auuwm+betaa*utau2*moengu/moengu2mroot
   tauvw(:,:,km1) = auvwm+betaa*utau2*moengv/moengv2mroot
+
+  CASE(6)	! NEW APPROACH + Schumann's model
+
+  auuwm=-zl/2*(0.016-dudt)
+  auvwm=-zl/2*(-dvdt)
+
+  tauuw(:,:,km1) = auuwm-utau*utau_s*ufluc/vsfc
+  tauvw(:,:,km1) = auvwm-utau*utau_s*vfluc/vsfc
+
 
 END SELECT
 

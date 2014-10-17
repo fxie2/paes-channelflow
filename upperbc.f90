@@ -147,7 +147,15 @@ SELECT CASE(isurface)
   tauuw(:,:,k) = auuwm-betaa*utau2*moengu/moengu2mroot
   tauvw(:,:,k) = auvwm-betaa*utau2*moengv/moengv2mroot
 
-  END SELECT
+  CASE(6)	! NEW APPROACH + Schumann's model
+
+  auuwm=-zl/2*(0.016-dudt)
+  auvwm=-zl/2*(-dvdt)
+
+  tauuw(:,:,k) = -auuwm+utau*utau_s*ufluc/vsfc
+  tauvw(:,:,k) = -auvwm+utau*utau_s*vfluc/vsfc
+
+END SELECT
 
 end subroutine sufsim_upper
 
