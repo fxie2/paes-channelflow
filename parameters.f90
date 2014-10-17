@@ -5,6 +5,7 @@ module parameters
 ! MODEL CONSTANTS
   real, parameter :: grav=9.81
   real, parameter :: vk=0.4
+  real, parameter :: betaa=0.35 ! added by Paulo 10/17/14
   real :: emin
   real :: cb
   real :: skc
@@ -31,6 +32,7 @@ module parameters
 ! imodel=4: Smag
 
   INTEGER :: imodel  
+  INTEGER :: isurface !surface model by Paulo 10/17/14
 end module parameters
 
 

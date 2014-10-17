@@ -29,7 +29,7 @@ program les
       
   namelist /RESTARTING/ restart, restart_file
   namelist /TIMING/ case, timax, savfrq, meanfrq, isbgr, cfl, dt,&
-       cb, skc, spectout, spectav, imodel
+       cb, skc, spectout, spectav, imodel, isurface ! added by Paulo 10/17/14
   namelist /GRIDSIZE/ nnx, nny, nnz
   namelist /PARAMS/ xl, yl, zl, z0
       

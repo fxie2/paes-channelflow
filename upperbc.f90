@@ -49,6 +49,16 @@ subroutine sufsim_upper(k,km1)
   real :: q1xy,q10xy,c1xy,c10xy,auuwm,auvwm
   real :: psim, psih, bus_psim, bus_psih
 
+  ! new variables added by Paulo 10/17/14
+  real :: sfluc(nnxb,nnyb),sfluc2(nnxb,nnyb),sfluc2m
+  real :: ufluc2(nnxb,nnyb),vfluc2(nnxb,nnyb),ufluc2m
+  real :: vfluc2m,ufluc2mroot,vfluc2mroot,sfluc2mroot
+  real :: ufluc(nnxb,nnyb),vfluc(nnxb,nnyb)
+  real :: sufluc(nnxb,nnyb),svfluc(nnxb,nnyb),suflucm,svflucm
+  real :: denom,checku,checkv,checkfluc
+  real :: moengu(nnxb,nnyb),moengv(nnxb,nnyb),moengu2(nnxb,nnyb),moengv2(nnxb,nnyb),moengu2m,moengv2m,moengu2mroot,moengv2mroot
+  integer :: sx,sy
+
      
   ! FIND MEAN FIELD VALUES AT THIS LEVEL.
   u1xy=sum(dble(ubuf(:,:,0)))*xymb+ugal
@@ -79,13 +89,65 @@ subroutine sufsim_upper(k,km1)
 ! facw = -utau2/max(windm*sqrt(u1xy*u1xy+v1xy*v1xy),1.e-12)
   facw = utau2/(windm*vsfc)
 
-  if (abs(facw) .lt. 1.e4) then
-     tauuw(:,:,k) = facw*(windm*(ubuf(:,:,0)+ugal-u1xy) + wind(:,:)*u1xy)
-     tauvw(:,:,k) = facw*(windm*(vbuf(:,:,0)+vgal-v1xy) + wind(:,:)*v1xy)
-  else
-     tauuw(:,:,k) = auuwm
-     tauvw(:,:,k) = auvwm
-  endif
+! additional models by Paulo 10/17/14
+if (isurface>2) then
+  sfluc=wind(:,:)-windm
+  ufluc=ubuf(:,:,0)+ugal-u1xy
+  vfluc=vbuf(:,:,0)+vgal-v1xy
+  do sx = 1,nnxb
+    do sy = 1,nnyb
+      sfluc2(sx,sy)=sfluc(sx,sy)**2
+      ufluc2(sx,sy)=ufluc(sx,sy)**2
+      vfluc2(sx,sy)=vfluc(sx,sy)**2
+      sufluc(sx,sy)=ufluc(sx,sy)*sfluc(sx,sy)
+      svfluc(sx,sy)=vfluc(sx,sy)*sfluc(sx,sy)
+      moengu(sx,sy)=(sfluc(sx,sy)*u1xy+windm*ufluc(sx,sy))
+      moengv(sx,sy)=(sfluc(sx,sy)*v1xy+windm*vfluc(sx,sy))
+      moengu2(sx,sy)=moengu(sx,sy)**2
+      moengv2(sx,sy)=moengv(sx,sy)**2
+    end do
+  end do
+  sfluc2m=sum(dble(sfluc2))*xymb
+  ufluc2m=sum(dble(ufluc2))*xymb
+  vfluc2m=sum(dble(vfluc2))*xymb
+  sfluc2mroot=sqrt(sfluc2m)
+  ufluc2mroot=sqrt(ufluc2m)
+  vfluc2mroot=sqrt(vfluc2m)
+  suflucm=sum(dble(sufluc))*xymb
+  svflucm=sum(dble(svfluc))*xymb
+  moengu2m=sum(dble(moengu2))*xymb
+  moengv2m=sum(dble(moengu2))*xymb
+  moengu2mroot=sqrt(moengu2m)
+  moengv2mroot=sqrt(moengv2m)
+end if
+
+SELECT CASE(isurface)
+
+  CASE(1)	!Schumann's model
+  tauuw(:,:,k) = utau2/(vsfc)*(ubuf(:,:,0)+ugal)
+  tauvw(:,:,k) = utau2/(vsfc)*(vbuf(:,:,0)+vgal)
+
+  CASE(2)	!Moeng's model
+  tauuw(:,:,k) = utau2/(windm*vsfc)*(windm*ufluc + wind(:,:)*u1xy)
+  tauvw(:,:,k) = utau2/(windm*vsfc)*(windm*vfluc + wind(:,:)*v1xy)
+
+  CASE(3)	!Wei's model
+  tauuw(:,:,k) = auuwm-betaa*ufluc*utau2/ufluc2mroot
+  tauvw(:,:,k) = auvwm-betaa*vfluc*utau2/vfluc2mroot
+
+  CASE(4)	!Moeng's model without linearization
+  
+  denom=sqrt((windm*u1xy+suflucm)**2+(windm*v1xy+svflucm)**2)
+
+  tauuw(:,:,k) = utau2*(wind(:,:)*(ubuf(:,:,0)+ugal))/denom
+  tauvw(:,:,k) = utau2*(wind(:,:)*(vbuf(:,:,0)+vgal))/denom
+
+  CASE(5)	!Wei's model with Moeng's Fluctuation
+
+  tauuw(:,:,k) = auuwm-betaa*utau2*moengu/moengu2mroot
+  tauvw(:,:,k) = auvwm-betaa*utau2*moengv/moengv2mroot
+
+  END SELECT
 
 end subroutine sufsim_upper
 

@@ -4,7 +4,8 @@ MPIOBJS = tridiag_par.o communicate.o decomp.o read_write_mpi.o
 
 # Lion XO,XK
 FC = mpif90
-FFLAGS = -O3 -L/usr/global/fftw/2.1.5/pgi/lib/ 
+# location of FFTW lib changed by Paulo 10/17/14
+FFLAGS = -O3 -L/gpfs/home/pzl126/work/channel-case-data/lib/  
 FFTLIB = filter_fftw.o
 FLIBS = -lsrfftw -lsfftw -ldfftw
 DEFS = $(DEFINES)
