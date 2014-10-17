@@ -1,0 +1,12 @@
+#UNCOMMENT FOR PARALLEL VERSION USING MPI
+DEFINES = -DMPI
+MPIOBJS = tridiag_par.o communicate.o decomp.o read_write_mpi.o
+
+# Lion XO,XK
+FC = mpif90
+FFLAGS = -O3 -L/usr/global/fftw/2.1.5/pgi/lib/ 
+FFTLIB = filter_fftw.o
+FLIBS = -lsrfftw -lsfftw -ldfftw
+DEFS = $(DEFINES)
+
+

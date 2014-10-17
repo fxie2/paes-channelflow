@@ -1,0 +1,18 @@
+# Dec. 2006: Modify the code from rotational form to divergence form
+	#. Modify the compadv1.f90: 
+		# I stored the div form as compadv1.f90.div_form
+		# I stored the rot form as compadv1.f90.rot_form
+	#. Modify the compmn.F90: for the output of pressure terms: <pple> and <wple>..
+		# Note the pressure term in div. form and rot. form are different
+
+
+# 01/09/2007: Modify to output the energy spectrum of the total velocity
+	# Modify the spectra1.F90: stored as spectra1.F90.total_Ek
+	  (Use the variables for vspectrum to store and output the total spectrum)
+	# 01/10/2007: I found my modification was wrong!!!
+	  . I don't need to modify anything. The spectrum for total velocity is 
+	    just the sum of the energy spectrum for u, v and w.
+	  . In my wrong modifications, I used total velocity= (u^2+v^2+w^2)**0.5
+			. 1. it has a mean
+			. 2. even taken out the mean, the rms value of that quantity
+				does not agree with the the total kinetic energy.
