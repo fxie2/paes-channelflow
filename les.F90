@@ -400,7 +400,7 @@ end program les
 	   IF (it .eq. 0) THEN
 	   WRITE(500,'(5a12)') '#Time', 'utau', 'utau_s', 'dudt', 'dvdt'
 	   END IF
-	   WRITE(500,'(4f12.3, f12.6 )') time+time_start, utau, utau_s, dudt, dvdt
+	   WRITE(500,'(f12.3, 4f12.6 )') time+time_start, utau, utau_s, dudt, dvdt
 	CLOSE(500)  
         ENDIF
 
